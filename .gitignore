@@ -1,0 +1,6 @@
+*.o
+.*
+*Client
+*Server
+Starter
+!.gitignore
