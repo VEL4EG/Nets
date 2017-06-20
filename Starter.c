@@ -10,7 +10,9 @@ enum ConnectionMode
 {
 	unicast,
 	multicast,
-	broadcast
+	broadcast,
+	TCP,
+	FTP
 };
 
 typedef enum ConnectionMode ConnectionMode;
@@ -28,6 +30,8 @@ int main()
 		return -1;
 	}
 
+	printf("Labwork1\n");
+	
 	printf("Unicast\n");
 	start(unicast, port, ip);
 
@@ -35,32 +39,34 @@ int main()
 	start(multicast, port, "239.0.0.1");
 
 	printf("Broadcast\n");
-	start(broadcast, port, NULL);
+	start(broadcast, port, NULL); 
+	printf("Labwork2\n");
+	start(TCP, port, ip); 
 }
 
 void start(ConnectionMode mode, char *port, char *ip)
 {
 	pid_t pid;
-	char serverFileName[10], clientFileName[10], serverNumber[5];
+	char serverFileName[30], clientFileName[30], serverNumber[5];
 	int serversCount;
 	char *clientArgv[4] = {clientFileName, ip, port, NULL};
-	char *serverArgv[3] = {serverFileName, NULL, NULL, NULL};
+	char *serverArgv[4] = {serverFileName, NULL, NULL, NULL};
 	char *const envp[] = {NULL};
 
 	switch(mode)
 	{
 		case unicast:
 		{
-			strcpy(serverFileName, "unicastServer");
-			strcpy(clientFileName, "unicastClient");
+			strcpy(serverFileName, "./Labwork1/unicastServer");
+			strcpy(clientFileName, "./Labwork1/unicastClient");
 			serversCount = 1;
 		}
 		break;
 		
 		case multicast:
 		{
-			strcpy(serverFileName, "multicastServer");
-			strcpy(clientFileName, "multicastClient");
+			strcpy(serverFileName, "./Labwork1/multicastServer");
+			strcpy(clientFileName, "./Labwork1/multicastClient");
 			serverArgv[2] = ip;
 			serversCount = 3;
 		}
@@ -68,11 +74,19 @@ void start(ConnectionMode mode, char *port, char *ip)
 		
 		case broadcast:
 		{
-			strcpy(serverFileName, "broadcastServer");
-			strcpy(clientFileName, "broadcastClient");
+			strcpy(serverFileName, "./Labwork1/broadcastServer");
+			strcpy(clientFileName, "./Labwork1/broadcastClient");
 			serversCount = 3;
 			clientArgv[1] = port;
 			clientArgv[2] = NULL;
+		}
+		break;
+		
+		case TCP:
+		{
+			strcpy(serverFileName, "./Labwork2/Server");
+			strcpy(clientFileName, "./Labwork2/Client");
+			serversCount = 1;
 		}
 		break;
 	}

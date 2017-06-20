@@ -51,6 +51,74 @@ int makeUDPSocket(const char *name, const char *port)
 	return sockfd;
 }
 
+int launchTCPServer(const char *port, int maxQueueSize)
+{
+	int sockfd;
+	sockaddr_in addr;
+
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+	if (sockfd == -1)
+	{
+		sprintf(errorMsg, "socket error: %s", strerror(errno));
+		
+		return -1;
+	}
+	
+	memset(&addr, 0, sizeof addr);
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(atoi(port));
+	addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+	if (bind(sockfd, (sockaddr *) &addr, sizeof addr) == -1)
+	{
+		sprintf(errorMsg, "bind error: %s", strerror(errno));
+		close(sockfd);
+
+		return -1;
+	}
+	
+	if (listen(sockfd, maxQueueSize) == -1)
+	{
+		sprintf(errorMsg, "listen error: %s", strerror(errno));
+		close(sockfd);
+
+		return -1;
+	}
+
+	return sockfd;
+}
+
+int makeTCPConnection(const char *ip, const char *port)
+{
+	int sockfd;
+	sockaddr_in addr;
+
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+	if (sockfd == -1)
+	{
+		sprintf(errorMsg, "socket error: %s", strerror(errno));
+		
+		return -1;
+	}
+
+	memset(&addr, 0, sizeof addr);
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(atoi(port));
+	inet_aton(ip, &addr.sin_addr);
+	
+	if (connect(sockfd, (sockaddr *) &addr, sizeof addr) == -1)
+	{
+		sprintf(errorMsg, "connect error: %s", strerror(errno));
+		close(sockfd);
+
+		return -1;
+	}
+	
+	return sockfd;
+}
+
 void getCurrentTime(char *str, size_t maxLength)
 {
 	static struct timeval timer;

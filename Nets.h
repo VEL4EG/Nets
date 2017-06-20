@@ -27,6 +27,8 @@ typedef struct ifaddrs ifaddrs;
 typedef struct addrinfo addrinfo;
 
 int makeUDPSocket(const char *name, const char *port);
+int launchTCPServer(const char *port, int maxQueueSize);
+int makeTCPConnection(const char *ip, const char *port);
 int getLocalIp(char *ip);
 const char* getErrorMsg();
 int fillAddr(const char *name, const char *port, sockaddr_in *addr);
